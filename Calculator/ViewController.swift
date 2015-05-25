@@ -11,43 +11,76 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var display: UILabel!
+    @IBOutlet weak var history: UILabel!
     
-    var userIsInTheMidlleOfTypingSomething = false
+    @IBAction func clear() {
+        userIsInTheMidleOfTypingSomething = false
+        operandsStack.removeAll()
+        displayValue = 0
+    }
+    
+    @IBAction func backspace() {
+        if userIsInTheMidleOfTypingSomething {
+            display.text = dropLast(display.text!)
+        }
+    }
+    
+    var userIsInTheMidleOfTypingSomething = false
     
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
-        if userIsInTheMidlleOfTypingSomething {
+        if (digit == "." && display.text!.rangeOfString(".") != nil) {
+            return
+        }
+        if userIsInTheMidleOfTypingSomething {
             display.text = display.text! + digit
         } else {
             display.text = digit
-            userIsInTheMidlleOfTypingSomething = true
+            userIsInTheMidleOfTypingSomething = true
         }
     }
     
     @IBAction func operate(sender: UIButton) {
         let operation = sender.currentTitle!
-        if userIsInTheMidlleOfTypingSomething {
+        if userIsInTheMidleOfTypingSomething {
+            addToHistory(display.text!)
             enter()
         }
+        addToHistory(operation)
         switch (operation) {
-        case "+" : performOperation { $0 + $1 }
-        case "−" : performOperation { $1 - $0}
-        case "×" : performOperation { $0 * $1 }
-        case "÷" : performOperation { $1 / $0 }
-        case "√" : performOperation { sqrt($0)}
+        case "+" : performWithTwoOperators { $0 + $1 }
+        case "−" : performWithTwoOperators { $1 - $0}
+        case "×" : performWithTwoOperators { $0 * $1 }
+        case "÷" : performWithTwoOperators { $1 / $0 }
+        case "√" : performWithOneOperator { sqrt($0)}
+        case "sin" : performWithOneOperator { sin($0)}
+        case "cos" : performWithOneOperator { cos($0)}
         default: break
         }
-    
     }
     
-    func performOperation(operation: (Double, Double) -> Double) {
+    @IBAction func enterConstant(sender: UIButton) {
+        let constant = sender.currentTitle!
+        if userIsInTheMidleOfTypingSomething {
+            addToHistory(display.text!)
+            enter()
+        }
+        addToHistory(constant)
+        switch (constant) {
+        case "π" : displayValue = M_PI
+        default: break
+        }
+        enter()
+    }
+    
+    func performWithTwoOperators(operation: (Double, Double) -> Double) {
         if operandsStack.count > 1 {
             displayValue = operation(operandsStack.removeLast(), operandsStack.removeLast())
             enter()
         }
     }
     
-    func performOperation(operation: Double -> Double) {
+    func performWithOneOperator(operation: Double -> Double) {
         if operandsStack.count > 0 {
             displayValue = operation(operandsStack.removeLast())
             enter()
@@ -55,11 +88,17 @@ class ViewController: UIViewController {
     }
     
     var operandsStack = Array<Double>()
+    var operandsHistory = Array<String>()
     
     @IBAction func enter() {
-        userIsInTheMidlleOfTypingSomething = false
+        userIsInTheMidleOfTypingSomething = false
         operandsStack.append(displayValue)
         println("\(operandsStack)")
+    }
+    
+    func addToHistory(value: String) {
+        operandsHistory.append(value)
+        println("\(operandsHistory)")
     }
     
     var displayValue: Double {
