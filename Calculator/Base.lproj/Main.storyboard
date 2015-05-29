@@ -33,7 +33,7 @@
                                     <action selector="backspace" destination="BYZ-38-t0r" eventType="touchUpInside" id="L1F-co-ckd"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Ma-LV-aCQ">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="right" lineBreakMode="headTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Ma-LV-aCQ">
                                 <rect key="frame" x="16" y="92" width="568" height="63"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="63" id="VwQ-JT-wAe"/>

@@ -17,6 +17,8 @@ class ViewController: UIViewController {
         userIsInTheMidleOfTypingSomething = false
         operandsStack.removeAll()
         displayValue = 0
+        operandsHistory.removeAll()
+        displayHistory = ""
     }
     
     @IBAction func backspace() {
@@ -93,12 +95,12 @@ class ViewController: UIViewController {
     @IBAction func enter() {
         userIsInTheMidleOfTypingSomething = false
         operandsStack.append(displayValue)
-        println("\(operandsStack)")
+        //addToHistory("\(displayValue)")
     }
     
     func addToHistory(value: String) {
         operandsHistory.append(value)
-        println("\(operandsHistory)")
+        displayHistory = "\(operandsHistory)"
     }
     
     var displayValue: Double {
@@ -107,6 +109,15 @@ class ViewController: UIViewController {
         }
         get {
             return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
+        }
+    }
+    
+    var displayHistory: String {
+        set {
+            history.text = "\(newValue)"
+        }
+        get {
+            return history.text!
         }
     }
 }
