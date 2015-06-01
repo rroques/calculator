@@ -13,11 +13,12 @@ class ViewController: UIViewController {
     @IBOutlet weak var display: UILabel!
     @IBOutlet weak var history: UILabel!
     
+    var brain = CalculatorBrain()
+    
     @IBAction func clear() {
         userIsInTheMidleOfTypingSomething = false
-        operandsStack.removeAll()
+        brain.clear()
         displayValue = 0
-        operandsHistory.removeAll()
         displayHistory = ""
     }
     
@@ -43,31 +44,25 @@ class ViewController: UIViewController {
     }
     
     @IBAction func operate(sender: UIButton) {
-        let operation = sender.currentTitle!
         if userIsInTheMidleOfTypingSomething {
-            addToHistory(display.text!)
             enter()
         }
-        addToHistory(operation)
-        switch (operation) {
-        case "+" : performWithTwoOperators { $0 + $1 }
-        case "−" : performWithTwoOperators { $1 - $0}
-        case "×" : performWithTwoOperators { $0 * $1 }
-        case "÷" : performWithTwoOperators { $1 / $0 }
-        case "√" : performWithOneOperator { sqrt($0)}
-        case "sin" : performWithOneOperator { sin($0)}
-        case "cos" : performWithOneOperator { cos($0)}
-        default: break
+        if let operation = sender.currentTitle {
+            let (result, history) = brain.addOperand(operation)
+            if (result != nil) {
+                displayValue = result!
+                displayHistory = "\(history)"
+            } else {
+                displayValue = 0
+            }
         }
     }
     
     @IBAction func enterConstant(sender: UIButton) {
         let constant = sender.currentTitle!
         if userIsInTheMidleOfTypingSomething {
-            addToHistory(display.text!)
             enter()
         }
-        addToHistory(constant)
         switch (constant) {
         case "π" : displayValue = M_PI
         default: break
@@ -75,32 +70,9 @@ class ViewController: UIViewController {
         enter()
     }
     
-    func performWithTwoOperators(operation: (Double, Double) -> Double) {
-        if operandsStack.count > 1 {
-            displayValue = operation(operandsStack.removeLast(), operandsStack.removeLast())
-            enter()
-        }
-    }
-    
-    func performWithOneOperator(operation: Double -> Double) {
-        if operandsStack.count > 0 {
-            displayValue = operation(operandsStack.removeLast())
-            enter()
-        }
-    }
-    
-    var operandsStack = Array<Double>()
-    var operandsHistory = Array<String>()
-    
     @IBAction func enter() {
         userIsInTheMidleOfTypingSomething = false
-        operandsStack.append(displayValue)
-        //addToHistory("\(displayValue)")
-    }
-    
-    func addToHistory(value: String) {
-        operandsHistory.append(value)
-        displayHistory = "\(operandsHistory)"
+        brain.addOperand(displayValue)
     }
     
     var displayValue: Double {
