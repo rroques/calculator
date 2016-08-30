@@ -1,0 +1,4 @@
+language: objective-c
+osx_image: xcode8
+xcode_project: Calculator.xcodeproj
+xcode_scheme: CalculatorTests
